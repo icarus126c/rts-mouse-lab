@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>移动靶训练 - 指令落点实验室</title>
+    <link rel="stylesheet" href="./moving-target-training.css" />
+  </head>
+  <body>
+    <main class="moving-shell">
+      <section class="moving-lab">
+        <header class="lab-header">
+          <div>
+            <div class="module-nav">
+              <a class="back-link" href="./index.html">返回功能台</a>
+              <p class="eyebrow">RTS / MOBA Moving Targets</p>
+            </div>
+            <h1>移动靶训练</h1>
+          </div>
+          <div class="lab-actions">
+            <button id="movingStartButton" class="primary-button" type="button">开始训练</button>
+            <button id="movingChallengeButton" class="challenge-button" type="button">30秒挑战</button>
+            <button id="movingFullscreenButton" class="icon-button fullscreen-button" type="button" aria-label="点击区域全屏" title="点击区域全屏">⛶</button>
+            <button id="movingStopButton" class="icon-button stop-button" type="button" aria-label="结束训练" title="结束训练">■</button>
+          </div>
+        </header>
+
+        <div class="metric-strip" aria-live="polite">
+          <article>
+            <span>已命中</span>
+            <strong id="movingHitMetric">0</strong>
+          </article>
+          <article>
+            <span>点击准确率</span>
+            <strong id="movingAccuracyMetric">--</strong>
+          </article>
+          <article>
+            <span>平均命中</span>
+            <strong id="movingAverageMetric">--</strong>
+          </article>
+          <article>
+            <span>活动目标</span>
+            <strong id="movingActiveMetric">0</strong>
+          </article>
+          <article>
+            <span>挑战剩余</span>
+            <strong id="movingTimeMetric">--</strong>
+          </article>
+        </div>
+
+        <div id="movingArena" class="moving-arena" tabindex="0" aria-label="移动靶训练区域">
+          <div class="arena-grid"></div>
+          <div id="movingTargetLayer" class="target-layer"></div>
+          <div id="movingMessage" class="arena-message">
+            <strong>追上移动目标再落点。</strong>
+            <span>目标会在出现区域内生成，并在自己的移动范围里持续游走。点掉后立即补位。</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="moving-side">
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练设置</h2>
+            <span id="movingState" class="state-pill">待开始</span>
+          </div>
+          <label class="field">
+            <span>标靶大小 <strong id="movingSizeOutput">42px</strong></span>
+            <input id="movingSizeInput" type="range" min="20" max="84" step="1" value="42" />
+          </label>
+          <label class="field">
+            <span>同时出现靶 <strong id="movingCountOutput">3</strong></span>
+            <input id="movingCountInput" type="range" min="1" max="8" step="1" value="3" />
+          </label>
+          <label class="field">
+            <span>移动范围 <strong id="moveRangeOutput">150px</strong></span>
+            <input id="moveRangeInput" type="range" min="30" max="420" step="10" value="150" />
+          </label>
+          <label class="field">
+            <span>出现区域 <strong id="movingAreaOutput">90%</strong></span>
+            <input id="movingAreaInput" type="range" min="35" max="100" step="5" value="90" />
+          </label>
+          <label class="field">
+            <span>移动速度 <strong id="movingSpeedOutput">220px/s</strong></span>
+            <input id="movingSpeedInput" type="range" min="40" max="720" step="10" value="220" />
+          </label>
+          <label class="toggle-field">
+            <input id="movingHitSoundInput" type="checkbox" />
+            <span>
+              <strong>点击音频</strong>
+              <small>命中移动靶时播放短提示音。</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>本次结果</h2>
+          </div>
+          <dl class="result-grid">
+            <div>
+              <dt>命中</dt>
+              <dd id="movingResultHits">--</dd>
+            </div>
+            <div>
+              <dt>失误点击</dt>
+              <dd id="movingResultMisses">--</dd>
+            </div>
+            <div>
+              <dt>准确率</dt>
+              <dd id="movingResultAccuracy">--</dd>
+            </div>
+            <div>
+              <dt>平均命中</dt>
+              <dd id="movingResultAverage">--</dd>
+            </div>
+            <div>
+              <dt>正确点击速</dt>
+              <dd id="movingResultRate">--</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>挑战纪录</h2>
+          </div>
+          <div id="movingBestRecord" class="best-record">本机最佳：--</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练总结</h2>
+          </div>
+          <div id="movingSummary" class="summary">调移动速度和移动范围，能把训练从跟枪式追踪拉回 RTS / MOBA 的短追点击。</div>
+        </section>
+      </aside>
+    </main>
+    <script src="./challenge-records.js"></script>
+    <script src="./moving-target-training.js"></script>
+  </body>
+</html>

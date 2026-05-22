@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>刷新点训练 - 指令落点实验室</title>
+    <link rel="stylesheet" href="./refresh-point-training.css" />
+  </head>
+  <body>
+    <main class="refresh-shell">
+      <section class="refresh-lab">
+        <header class="lab-header">
+          <div>
+            <div class="module-nav">
+              <a class="back-link" href="./index.html">返回功能台</a>
+              <p class="eyebrow">RTS / MOBA Refresh Points</p>
+            </div>
+            <h1>刷新点训练</h1>
+          </div>
+          <div class="lab-actions">
+            <button id="refreshStartButton" class="primary-button" type="button">开始训练</button>
+            <button id="refreshChallengeButton" class="challenge-button" type="button">30秒挑战</button>
+            <button id="refreshFullscreenButton" class="icon-button fullscreen-button" type="button" aria-label="点击区域全屏" title="点击区域全屏">⛶</button>
+            <button id="refreshStopButton" class="icon-button stop-button" type="button" aria-label="结束训练" title="结束训练">■</button>
+          </div>
+        </header>
+
+        <div class="metric-strip" aria-live="polite">
+          <article>
+            <span>剩余时间</span>
+            <strong id="refreshTimeMetric">30.0s</strong>
+          </article>
+          <article>
+            <span>准确率</span>
+            <strong id="refreshAccuracyMetric">--</strong>
+          </article>
+          <article>
+            <span>平均时长</span>
+            <strong id="refreshAverageMetric">--</strong>
+          </article>
+          <article>
+            <span>已点击</span>
+            <strong id="refreshHitMetric">0</strong>
+          </article>
+        </div>
+
+        <div id="refreshArena" class="refresh-arena" tabindex="0" aria-label="刷新点训练区域">
+          <div class="arena-grid"></div>
+          <div id="refreshTargetLayer" class="target-layer"></div>
+          <div id="refreshMessage" class="arena-message">
+            <strong>在倒计时内尽量清掉刷新点。</strong>
+            <span>场上会始终维持设定数量的目标。空点会计入准确率，平均时长表示每次命中平均占用了多少训练时间。</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="refresh-side">
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练设置</h2>
+            <span id="refreshState" class="state-pill">待开始</span>
+          </div>
+          <label class="field">
+            <span>训练时长 <strong id="durationOutput">30秒</strong></span>
+            <input id="durationInput" type="range" min="10" max="120" step="5" value="30" />
+          </label>
+          <label class="field">
+            <span>标靶大小 <strong id="refreshSizeOutput">38px</strong></span>
+            <input id="refreshSizeInput" type="range" min="20" max="76" step="1" value="38" />
+          </label>
+          <label class="field">
+            <span>同时存在目标数 <strong id="targetCountOutput">3</strong></span>
+            <input id="targetCountInput" type="range" min="1" max="8" step="1" value="3" />
+          </label>
+          <label class="field">
+            <span>出现区域大小 <strong id="refreshRangeOutput">90%</strong></span>
+            <input id="refreshRangeInput" type="range" min="35" max="100" step="5" value="90" />
+          </label>
+          <label class="field">
+            <span>分散度 <strong id="scatterOutput">2.5x</strong></span>
+            <input id="scatterInput" type="range" min="0" max="6" step="0.5" value="2.5" />
+          </label>
+          <label class="toggle-field">
+            <input id="refreshHitSoundInput" type="checkbox" />
+            <span>
+              <strong>点击音频</strong>
+              <small>命中刷新点时播放短提示音。</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>本次结果</h2>
+          </div>
+          <dl class="result-grid">
+            <div>
+              <dt>命中</dt>
+              <dd id="refreshResultHits">--</dd>
+            </div>
+            <div>
+              <dt>失误</dt>
+              <dd id="refreshResultMisses">--</dd>
+            </div>
+            <div>
+              <dt>准确率</dt>
+              <dd id="refreshResultAccuracy">--</dd>
+            </div>
+            <div>
+              <dt>平均时长</dt>
+              <dd id="refreshResultAverage">--</dd>
+            </div>
+            <div>
+              <dt>正确点击速</dt>
+              <dd id="refreshResultRate">--</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>挑战纪录</h2>
+          </div>
+          <div id="refreshBestRecord" class="best-record">本机最佳：--</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练总结</h2>
+          </div>
+          <div id="refreshSummary" class="summary">完成一组倒计时训练后，这里会总结这段时间里的点击产出。</div>
+        </section>
+      </aside>
+    </main>
+    <script src="./challenge-records.js"></script>
+    <script src="./refresh-point-training.js"></script>
+  </body>
+</html>

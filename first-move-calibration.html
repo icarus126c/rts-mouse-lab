@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>首段落点校准 - 指令落点实验室</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="lab">
+        <header class="lab-header">
+          <div>
+            <div class="module-nav">
+              <a class="back-link" href="./index.html">返回功能台</a>
+              <p class="eyebrow">RTS / MOBA Sensitivity Check</p>
+            </div>
+            <h1>首段落点校准测试</h1>
+          </div>
+          <div class="run-actions">
+            <button id="startRunButton" class="primary-button" type="button">开始测试</button>
+            <button id="fullscreenButton" class="icon-button fullscreen-button" type="button" aria-label="训练区全屏" title="训练区全屏">⛶</button>
+            <button id="stopRunButton" class="icon-button" type="button" aria-label="结束测试" title="结束测试">■</button>
+          </div>
+        </header>
+
+        <div class="metric-strip" aria-live="polite">
+          <article>
+            <span>进度</span>
+            <strong id="progressValue">0 / 24</strong>
+          </article>
+          <article>
+            <span>首段干净</span>
+            <strong id="directValue">--</strong>
+          </article>
+          <article>
+            <span>过冲倾向</span>
+            <strong id="overshootValue">--</strong>
+          </article>
+          <article>
+            <span>修正耗时</span>
+            <strong id="correctionValue">--</strong>
+          </article>
+          <article id="pathEfficiencyMetric">
+            <span>轨迹效率</span>
+            <strong id="pathEfficiencyValue">--</strong>
+          </article>
+          <article id="hitRateMetric">
+            <span>命中率</span>
+            <strong id="hitRateValue">--</strong>
+          </article>
+        </div>
+
+        <div id="arena" class="arena" tabindex="0" aria-label="鼠标轨迹诊断区域">
+          <canvas id="traceCanvas"></canvas>
+          <div class="arena-grid"></div>
+          <button id="anchor" class="anchor" type="button" hidden aria-label="点击起点">
+            <span></span>
+          </button>
+          <div id="targetLayer" class="target-layer"></div>
+          <div id="arenaMessage" class="arena-message">
+            <strong>先测试你当前的游戏灵敏度。</strong>
+            <span>每轮先点绿色起点，再第一反应点红色目标。软件会看你是否冲过头再拉回。</span>
+          </div>
+          <div id="trialBadge" class="trial-badge" hidden></div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>测试设置</h2>
+            <span id="runState" class="state-pill">待开始</span>
+          </div>
+
+          <label class="field">
+            <span>方案名称</span>
+            <input id="profileNameInput" type="text" maxlength="24" value="当前灵敏度" />
+          </label>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>鼠标 DPI</span>
+              <input id="dpiInput" type="number" min="100" max="32000" step="100" value="1600" />
+            </label>
+            <label class="field">
+              <span>游戏灵敏度</span>
+              <input id="sensitivityInput" type="number" min="0.01" max="100" step="0.01" value="1.00" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>测试轮数 <strong id="roundCountOutput">24</strong></span>
+            <input id="roundCountInput" type="range" min="12" max="48" step="4" value="24" />
+          </label>
+
+          <label class="field">
+            <span>目标尺寸 <strong id="targetSizeOutput">38px</strong></span>
+            <input id="targetSizeInput" type="range" min="24" max="64" value="38" />
+          </label>
+
+          <label class="field">
+            <span>跳点跨度 <strong id="jumpScaleOutput">均衡</strong></span>
+            <input id="jumpScaleInput" type="range" min="0" max="2" step="1" value="1" />
+          </label>
+
+          <label class="field">
+            <span>出现区域范围 <strong id="spawnRangeOutput">100%</strong></span>
+            <input id="spawnRangeInput" type="range" min="35" max="100" step="5" value="100" />
+          </label>
+
+          <div class="option-grid">
+            <label class="toggle-field">
+              <input id="showTraceInput" type="checkbox" />
+              <span>
+                <strong>显示轨迹线</strong>
+                <small>默认隐藏视觉轨迹，打开后显示轨迹反馈。</small>
+              </span>
+            </label>
+            <label class="toggle-field">
+              <input id="pathEfficiencyInput" type="checkbox" checked />
+              <span>
+                <strong>统计轨迹效率</strong>
+                <small>比较最佳直线距离和实际轨迹长度。</small>
+              </span>
+            </label>
+            <label class="toggle-field">
+              <input id="hitRateInput" type="checkbox" checked />
+              <span>
+                <strong>统计命中率</strong>
+                <small>显示点中目标的比例和最终结果。</small>
+              </span>
+            </label>
+            <label class="toggle-field">
+              <input id="tripleTargetInput" type="checkbox" />
+              <span>
+                <strong>同时 3 个靶</strong>
+                <small>每轮连续点完 3 个目标，测连续指令里的首段落点。</small>
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel diagnosis-panel">
+          <div class="panel-heading">
+            <h2>即时诊断</h2>
+          </div>
+          <div id="diagnosisText" class="diagnosis">
+            结束一组测试后，这里会告诉你首段移动是否常见过冲、提前刹车和二次修正。
+          </div>
+          <div class="legend">
+            <p><i class="legend-line trace"></i>鼠标轨迹</p>
+            <p><i class="legend-line first"></i>首段结束点</p>
+            <p><i class="legend-line repair"></i>修正段</p>
+          </div>
+        </section>
+
+        <section class="panel compare-panel">
+          <div class="panel-heading">
+            <h2>动作类型对比</h2>
+          </div>
+          <div class="compare-table" aria-live="polite">
+            <div class="compare-head">
+              <span>类型</span>
+              <span>比例</span>
+              <span>整体耗时</span>
+              <span>修正耗时</span>
+            </div>
+            <div class="compare-row precise">
+              <strong>精准点击</strong>
+              <span id="preciseRateValue">--</span>
+              <span id="preciseTotalTimeValue">--</span>
+              <span id="preciseRepairTimeValue">--</span>
+            </div>
+            <div class="compare-row early-brake">
+              <strong>提前刹车</strong>
+              <span id="earlyBrakeRateValue">--</span>
+              <span id="earlyBrakeTotalTimeValue">--</span>
+              <span id="earlyBrakeRepairTimeValue">--</span>
+            </div>
+            <div class="compare-row overshoot">
+              <strong>过冲拉回</strong>
+              <span id="overshootRateTableValue">--</span>
+              <span id="overshootTotalTimeValue">--</span>
+              <span id="overshootRepairTimeValue">--</span>
+            </div>
+          </div>
+          <p id="compareNote" class="compare-note">跑几次后，这里会比较三种动作各自的速度。</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>最近一次</h2>
+          </div>
+          <dl class="trial-detail">
+            <div>
+              <dt>判断</dt>
+              <dd id="trialLabelValue">--</dd>
+            </div>
+            <div>
+              <dt>首段误差</dt>
+              <dd id="firstErrorValue">--</dd>
+            </div>
+            <div>
+              <dt>点击耗时</dt>
+              <dd id="trialTimeValue">--</dd>
+            </div>
+            <div>
+              <dt>修正次数</dt>
+              <dd id="repairCountValue">--</dd>
+            </div>
+            <div id="trialPathEfficiencyDetail">
+              <dt>轨迹效率</dt>
+              <dd id="trialPathEfficiencyValue">--</dd>
+            </div>
+            <div id="trialHitDetail">
+              <dt>命中</dt>
+              <dd id="trialHitValue">--</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel history-panel">
+          <div class="panel-heading">
+            <h2>方案记录</h2>
+            <button id="clearHistoryButton" class="ghost-button" type="button">清空</button>
+          </div>
+          <ol id="historyList" class="history-list"></ol>
+        </section>
+      </aside>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

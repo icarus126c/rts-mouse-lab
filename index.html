@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>指令落点实验室</title>
+    <link rel="stylesheet" href="./home.css" />
+  </head>
+  <body>
+    <main class="home-shell">
+      <header class="home-header">
+        <div>
+          <p class="eyebrow">RTS / MOBA Mouse Control</p>
+          <h1>指令落点实验室</h1>
+          <p class="home-copy">校准鼠标控制，比较动作策略，再把更稳的落点带回每一次指令。</p>
+        </div>
+        <dl class="home-focus" aria-label="当前研究方向">
+          <div>
+            <dt>当前核心</dt>
+            <dd>首段移动</dd>
+          </div>
+          <div>
+            <dt>关注指标</dt>
+            <dd>修正成本</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section class="module-band" aria-label="训练功能">
+        <div class="section-heading">
+          <h2>功能台</h2>
+          <span>7 个模块可用</span>
+        </div>
+
+        <div class="module-grid">
+          <a class="module-card active" href="./first-move-calibration.html">
+            <div class="module-preview" aria-hidden="true">
+              <span class="preview-anchor"></span>
+              <span class="preview-target first"></span>
+              <span class="preview-target second"></span>
+              <span class="preview-path"></span>
+            </div>
+            <div class="module-body">
+              <strong>首段落点校准</strong>
+              <p>看第一反应是否过冲、提前刹车或直接命中，并比较不同灵敏度下的修正代价。</p>
+              <span>进入测试</span>
+            </div>
+          </a>
+
+          <a class="module-card active" href="./command-rhythm.html">
+            <div class="module-preview quiet" aria-hidden="true"></div>
+            <div class="module-body">
+              <strong>连续指令节奏</strong>
+              <p>目标连续刷新，测多次指令中的命中率、节奏波动和每轮完成时间。</p>
+              <span>进入训练</span>
+            </div>
+          </a>
+
+          <a class="module-card active" href="./refresh-point-training.html">
+            <div class="module-preview refresh" aria-hidden="true">
+              <span class="refresh-target one"></span>
+              <span class="refresh-target two"></span>
+              <span class="refresh-target three"></span>
+            </div>
+            <div class="module-body">
+              <strong>刷新点训练</strong>
+              <p>在固定时长内不断清掉刷新的目标，比较准确率、平均命中耗时和点击数量。</p>
+              <span>进入训练</span>
+            </div>
+          </a>
+
+          <a class="module-card active" href="./vanish-point-training.html">
+            <div class="module-preview vanish" aria-hidden="true">
+              <span class="vanish-target"></span>
+            </div>
+            <div class="module-body">
+              <strong>消失点训练</strong>
+              <p>目标短暂放大后收回，练习在窗口期内抓住出现点。</p>
+              <span>进入训练</span>
+            </div>
+          </a>
+
+          <a class="module-card active" href="./moving-target-training.html">
+            <div class="module-preview moving" aria-hidden="true">
+              <span class="moving-track"></span>
+              <span class="moving-preview-target"></span>
+            </div>
+            <div class="module-body">
+              <strong>移动靶训练</strong>
+              <p>目标在活动范围里持续移动，练习追踪后的点击落点。</p>
+              <span>进入训练</span>
+            </div>
+          </a>
+
+          <a class="module-card active" href="./rotating-target-training.html">
+            <div class="module-preview rotating" aria-hidden="true">
+              <span class="rotating-triplet">
+                <i></i>
+                <i class="hot"></i>
+                <i></i>
+              </span>
+            </div>
+            <div class="module-body">
+              <strong>旋转靶训练</strong>
+              <p>三点组合在平移中旋转，只抓随机红点，避开白点。</p>
+              <span>进入训练</span>
+            </div>
+          </a>
+
+          <a class="module-card active" href="./box-select-training.html">
+            <div class="module-preview box-select" aria-hidden="true">
+              <span class="selection-frame"></span>
+              <i class="select-preview-dot one"></i>
+              <i class="select-preview-dot two"></i>
+              <i class="select-preview-dot three"></i>
+              <i class="select-preview-dot red"></i>
+            </div>
+            <div class="module-body">
+              <strong>框选练习</strong>
+              <p>一次包住绿色目标，再顺势点掉红点，检查框选方向与后续落点路径。</p>
+              <span>进入训练</span>
+            </div>
+          </a>
+
+          <article class="module-card planned">
+            <div class="module-preview quiet lanes" aria-hidden="true"></div>
+            <div class="module-body">
+              <strong>实战落点场景</strong>
+              <p>预留给补刀、点地板与混合目标训练。</p>
+              <span>规划中</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

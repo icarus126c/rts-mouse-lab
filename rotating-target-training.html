@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>旋转靶训练 - 指令落点实验室</title>
+    <link rel="stylesheet" href="./rotating-target-training.css" />
+  </head>
+  <body>
+    <main class="rotating-shell">
+      <section class="rotating-lab">
+        <header class="lab-header">
+          <div>
+            <div class="module-nav">
+              <a class="back-link" href="./index.html">返回功能台</a>
+              <p class="eyebrow">RTS / MOBA Rotating Targets</p>
+            </div>
+            <h1>旋转靶训练</h1>
+          </div>
+          <div class="lab-actions">
+            <button id="rotatingStartButton" class="primary-button" type="button">开始训练</button>
+            <button id="rotatingChallengeButton" class="challenge-button" type="button">30秒挑战</button>
+            <button id="rotatingFullscreenButton" class="icon-button fullscreen-button" type="button" aria-label="点击区域全屏" title="点击区域全屏">⛶</button>
+            <button id="rotatingStopButton" class="icon-button stop-button" type="button" aria-label="结束训练" title="结束训练">■</button>
+          </div>
+        </header>
+
+        <div class="metric-strip" aria-live="polite">
+          <article>
+            <span>已命中</span>
+            <strong id="rotatingHitMetric">0</strong>
+          </article>
+          <article>
+            <span>点击准确率</span>
+            <strong id="rotatingAccuracyMetric">--</strong>
+          </article>
+          <article>
+            <span>点歪</span>
+            <strong id="rotatingMissMetric">0</strong>
+          </article>
+          <article>
+            <span>活动组合</span>
+            <strong id="rotatingActiveMetric">0</strong>
+          </article>
+          <article>
+            <span>挑战剩余</span>
+            <strong id="rotatingTimeMetric">--</strong>
+          </article>
+        </div>
+
+        <div id="rotatingArena" class="rotating-arena" tabindex="0" aria-label="旋转靶训练区域">
+          <div class="arena-grid"></div>
+          <div id="rotatingTargetLayer" class="target-layer"></div>
+          <div id="rotatingMessage" class="arena-message">
+            <strong>只点旋转组合里的红点。</strong>
+            <span>三点组一边平移一边绕组中心旋转。随机红点可得分，点白点或空点都算点歪。</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rotating-side">
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练设置</h2>
+            <span id="rotatingState" class="state-pill">待开始</span>
+          </div>
+          <label class="field">
+            <span>单点大小 <strong id="rotatingSizeOutput">32px</strong></span>
+            <input id="rotatingSizeInput" type="range" min="18" max="62" step="1" value="32" />
+          </label>
+          <label class="field">
+            <span>同时组合数 <strong id="rotatingCountOutput">2</strong></span>
+            <input id="rotatingCountInput" type="range" min="1" max="6" step="1" value="2" />
+          </label>
+          <label class="field">
+            <span>移动范围 <strong id="rotatingMoveRangeOutput">140px</strong></span>
+            <input id="rotatingMoveRangeInput" type="range" min="30" max="420" step="10" value="140" />
+          </label>
+          <label class="field">
+            <span>出现区域 <strong id="rotatingAreaOutput">90%</strong></span>
+            <input id="rotatingAreaInput" type="range" min="35" max="100" step="5" value="90" />
+          </label>
+          <label class="field">
+            <span>移动速度 <strong id="rotatingMoveSpeedOutput">200px/s</strong></span>
+            <input id="rotatingMoveSpeedInput" type="range" min="40" max="720" step="10" value="200" />
+          </label>
+          <label class="field">
+            <span>旋转速度 <strong id="rotationSpeedOutput">160deg/s</strong></span>
+            <input id="rotationSpeedInput" type="range" min="0" max="720" step="10" value="160" />
+          </label>
+          <label class="toggle-field">
+            <input id="rotatingHitSoundInput" type="checkbox" />
+            <span>
+              <strong>点击音频</strong>
+              <small>点中红点时播放短提示音。</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>本次结果</h2>
+          </div>
+          <dl class="result-grid">
+            <div><dt>命中</dt><dd id="rotatingResultHits">--</dd></div>
+            <div><dt>点歪</dt><dd id="rotatingResultMisses">--</dd></div>
+            <div><dt>准确率</dt><dd id="rotatingResultAccuracy">--</dd></div>
+            <div><dt>平均命中</dt><dd id="rotatingResultAverage">--</dd></div>
+            <div><dt>正确点击速</dt><dd id="rotatingResultRate">--</dd></div>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>挑战纪录</h2></div>
+          <div id="rotatingBestRecord" class="best-record">本机最佳：--</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><h2>训练总结</h2></div>
+          <div id="rotatingSummary" class="summary">追踪组合中心之外，还要判断红点绕转后的实际落点。</div>
+        </section>
+      </aside>
+    </main>
+    <script src="./challenge-records.js"></script>
+    <script src="./rotating-target-training.js"></script>
+  </body>
+</html>

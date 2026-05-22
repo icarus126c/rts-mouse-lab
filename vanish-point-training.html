@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>消失点训练 - 指令落点实验室</title>
+    <link rel="stylesheet" href="./vanish-point-training.css" />
+  </head>
+  <body>
+    <main class="vanish-shell">
+      <section class="vanish-lab">
+        <header class="lab-header">
+          <div>
+            <div class="module-nav">
+              <a class="back-link" href="./index.html">返回功能台</a>
+              <p class="eyebrow">RTS / MOBA Vanish Points</p>
+            </div>
+            <h1>消失点训练</h1>
+          </div>
+          <div class="lab-actions">
+            <button id="vanishStartButton" class="primary-button" type="button">开始训练</button>
+            <button id="vanishChallengeButton" class="challenge-button" type="button">开始挑战</button>
+            <button id="vanishFullscreenButton" class="icon-button fullscreen-button" type="button" aria-label="点击区域全屏" title="点击区域全屏">⛶</button>
+            <button id="vanishStopButton" class="icon-button stop-button" type="button" aria-label="结束训练" title="结束训练">■</button>
+          </div>
+        </header>
+
+        <div class="metric-strip" aria-live="polite">
+          <article>
+            <span>已命中</span>
+            <strong id="vanishHitMetric">0</strong>
+          </article>
+          <article>
+            <span>漏掉</span>
+            <strong id="vanishExpiredMetric">0</strong>
+          </article>
+          <article>
+            <span>点击准确率</span>
+            <strong id="vanishAccuracyMetric">--</strong>
+          </article>
+          <article>
+            <span>平均命中</span>
+            <strong id="vanishAverageMetric">--</strong>
+          </article>
+          <article>
+            <span>当前节奏</span>
+            <strong id="vanishTempoMetric">自由</strong>
+          </article>
+        </div>
+
+        <div id="vanishArena" class="vanish-arena" tabindex="0" aria-label="消失点训练区域">
+          <div class="arena-grid"></div>
+          <div id="vanishTargetLayer" class="target-layer"></div>
+          <div id="vanishMessage" class="arena-message">
+            <strong>抓住短暂出现的目标。</strong>
+            <span>标靶会从小变大，再收回消失。系统按设定间隔持续刷靶，多个目标会在窗口期内同时存在。</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="vanish-side">
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练设置</h2>
+            <span id="vanishState" class="state-pill">待开始</span>
+          </div>
+          <label class="field">
+            <span>标靶最大尺寸 <strong id="vanishSizeOutput">48px</strong></span>
+            <input id="vanishSizeInput" type="range" min="24" max="92" step="1" value="48" />
+          </label>
+          <label class="field">
+            <span>靶存在时长 <strong id="lifetimeOutput">2000ms</strong></span>
+            <input id="lifetimeInput" type="range" min="250" max="5000" step="50" value="2000" />
+          </label>
+          <label class="field">
+            <span>出现间隔 <strong id="gapOutput">500ms</strong></span>
+            <input id="gapInput" type="range" min="0" max="1600" step="20" value="500" />
+          </label>
+          <label class="field">
+            <span>挑战漏掉上限 <strong id="failLimitOutput">5</strong></span>
+            <input id="failLimitInput" type="range" min="1" max="20" step="1" value="5" />
+          </label>
+          <label class="toggle-field">
+            <input id="vanishHitSoundInput" type="checkbox" />
+            <span>
+              <strong>点击音频</strong>
+              <small>命中消失点时播放短提示音。</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>本次结果</h2>
+          </div>
+          <dl class="result-grid">
+            <div>
+              <dt>命中</dt>
+              <dd id="vanishResultHits">--</dd>
+            </div>
+            <div>
+              <dt>漏掉</dt>
+              <dd id="vanishResultExpired">--</dd>
+            </div>
+            <div>
+              <dt>失误点击</dt>
+              <dd id="vanishResultMisses">--</dd>
+            </div>
+            <div>
+              <dt>平均命中</dt>
+              <dd id="vanishResultAverage">--</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>挑战纪录</h2>
+          </div>
+          <div id="vanishBestRecord" class="best-record">本机最佳：--</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>训练总结</h2>
+          </div>
+          <div id="vanishSummary" class="summary">开始后，目标窗口期和出现间隔会直接决定训练节奏。</div>
+        </section>
+      </aside>
+    </main>
+    <script src="./challenge-records.js"></script>
+    <script src="./vanish-point-training.js"></script>
+  </body>
+</html>
