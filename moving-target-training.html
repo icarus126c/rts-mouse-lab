@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>移动靶训练 - 指令落点实验室</title>
     <link rel="stylesheet" href="./moving-target-training.css" />
+    <link rel="stylesheet" href="./click-buttons.css" />
   </head>
   <body>
     <main class="moving-shell">
@@ -84,6 +85,14 @@
             <span>移动速度 <strong id="movingSpeedOutput">220px/s</strong></span>
             <input id="movingSpeedInput" type="range" min="40" max="720" step="10" value="220" />
           </label>
+          <label class="field">
+            <span>命中按键</span>
+            <select id="movingClickButtonInput">
+              <option value="left">左键</option>
+              <option value="right">右键</option>
+              <option value="both">左右都可</option>
+            </select>
+          </label>
           <label class="toggle-field">
             <input id="movingHitSoundInput" type="checkbox" />
             <span>
@@ -136,6 +145,7 @@
         </section>
       </aside>
     </main>
+    <script src="./click-buttons.js"></script>
     <script src="./challenge-records.js"></script>
     <script src="./moving-target-training.js"></script>
   </body>

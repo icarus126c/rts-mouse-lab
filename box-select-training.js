@@ -11,6 +11,7 @@ const selectSizeInput = document.querySelector("#selectSizeInput");
 const selectSpreadInput = document.querySelector("#selectSpreadInput");
 const selectRedDistanceInput = document.querySelector("#selectRedDistanceInput");
 const selectAreaInput = document.querySelector("#selectAreaInput");
+const selectClickButtonInput = document.querySelector("#selectClickButtonInput");
 const selectHitSoundInput = document.querySelector("#selectHitSoundInput");
 const selectCountOutput = document.querySelector("#selectCountOutput");
 const selectSizeOutput = document.querySelector("#selectSizeOutput");
@@ -27,6 +28,8 @@ const selectResultHits = document.querySelector("#selectResultHits");
 const selectResultMisses = document.querySelector("#selectResultMisses");
 const selectResultBox = document.querySelector("#selectResultBox");
 const selectResultAverage = document.querySelector("#selectResultAverage");
+const selectResultBoxTime = document.querySelector("#selectResultBoxTime");
+const selectResultCommandDelay = document.querySelector("#selectResultCommandDelay");
 const selectResultDirection = document.querySelector("#selectResultDirection");
 const selectResultPath = document.querySelector("#selectResultPath");
 const selectResultRate = document.querySelector("#selectResultRate");
@@ -47,6 +50,7 @@ function selectSettings() {
     spread: Number(selectSpreadInput.value),
     redDistance: Number(selectRedDistanceInput.value),
     spawnRange: Number(selectAreaInput.value) / 100,
+    clickButton: window.trainingClickButtons.mode(selectClickButtonInput),
     hitSound: selectHitSoundInput.checked,
   };
 }
@@ -73,6 +77,8 @@ function startSelectTraining(mode = "free") {
     boxSuccesses: 0,
     directionScores: [],
     pathScores: [],
+    boxTimes: [],
+    commandDelays: [],
     completionTimes: [],
     round: null,
   };
@@ -114,6 +120,8 @@ function createSelectRound() {
     red,
     boxReady: false,
     directionScore: 0,
+    boxTime: 0,
+    boxReleasedAt: 0,
     releasePoint: null,
     chasePath: [],
   };
@@ -178,6 +186,7 @@ function beginSelectDrag(event) {
     pointerId: event.pointerId,
     start: point,
     last: point,
+    startedAt: performance.now(),
   };
   selectArena.setPointerCapture(event.pointerId);
   selectBox.classList.remove("failed");
@@ -202,11 +211,11 @@ function endSelectDrag(event) {
   const point = arenaPoint(event);
   const rect = selectionRect(drag.start, point);
   showSelectionBox(rect);
-  evaluateSelectBox(drag.start, point, rect);
+  evaluateSelectBox(drag.start, point, rect, drag.startedAt);
   selectArena.releasePointerCapture(event.pointerId);
 }
 
-function evaluateSelectBox(start, end, rect) {
+function evaluateSelectBox(start, end, rect, boxStartedAt) {
   const round = selectRun.round;
   if (!round) return;
   selectRun.boxAttempts += 1;
@@ -224,6 +233,8 @@ function evaluateSelectBox(start, end, rect) {
   round.releasePoint = end;
   round.chasePath = [end];
   round.directionScore = selectDirectionScore(start, end, round.greenCenter, round.red);
+  round.boxTime = Math.max(0, performance.now() - boxStartedAt);
+  round.boxReleasedAt = performance.now();
   markSelectedGreens();
   unlockRedTarget();
   updateSelectMetrics();
@@ -231,7 +242,7 @@ function evaluateSelectBox(start, end, rect) {
 
 function clickSelectRed(event) {
   const red = event.target.closest(".select-target.red");
-  if (!selectRun || !red) return;
+  if (!selectRun || !red || !window.trainingClickButtons.accepts(event, selectRun.settings.clickButton)) return;
   event.stopPropagation();
   const round = selectRun.round;
   if (!round?.boxReady) {
@@ -241,17 +252,20 @@ function clickSelectRed(event) {
   }
   const hitPoint = arenaPoint(event);
   const pathScore = selectPathScore(round.releasePoint, hitPoint, [...round.chasePath, hitPoint]);
+  const commandDelay = Math.max(0, performance.now() - round.boxReleasedAt);
   selectRun.successes += 1;
   selectRun.completionTimes.push(performance.now() - round.startedAt);
   selectRun.directionScores.push(round.directionScore);
   selectRun.pathScores.push(pathScore);
+  selectRun.boxTimes.push(round.boxTime);
+  selectRun.commandDelays.push(commandDelay);
   if (selectRun.settings.hitSound) playSelectHitSound();
   spawnSelectRound();
   updateSelectMetrics();
 }
 
 function missSelectArena(event) {
-  if (!selectRun || selectDrag || event.target.closest(".select-target.red")) return;
+  if (!selectRun || selectDrag || event.target.closest(".select-target.red") || event.type === "pointerdown") return;
   selectRun.misses += 1;
   updateSelectMetrics();
 }
@@ -288,22 +302,26 @@ function finishSelectTraining(showResult) {
 function showSelectResult(run) {
   const boxRate = rate(run.boxSuccesses, run.boxAttempts);
   const averageTime = averageSelect(run.completionTimes);
+  const averageBoxTime = averageSelect(run.boxTimes);
+  const averageCommandDelay = averageSelect(run.commandDelays);
   const directionRate = averageSelect(run.directionScores);
   const pathRate = averageSelect(run.pathScores);
   selectResultHits.textContent = String(run.successes);
   selectResultMisses.textContent = String(run.misses);
   selectResultBox.textContent = run.boxAttempts ? formatSelectPercent(boxRate) : "--";
   selectResultAverage.textContent = run.completionTimes.length ? formatSelectMs(averageTime) : "--";
+  selectResultBoxTime.textContent = run.boxTimes.length ? formatSelectMs(averageBoxTime) : "--";
+  selectResultCommandDelay.textContent = run.commandDelays.length ? formatSelectMs(averageCommandDelay) : "--";
   selectResultDirection.textContent = run.directionScores.length ? formatSelectPercent(directionRate) : "--";
   selectResultPath.textContent = run.pathScores.length ? formatSelectPercent(pathRate) : "--";
   selectResultRate.textContent = run.mode === "challenge" ? formatSelectRate(correctSelectRate(run)) : "--";
   if (run.mode === "challenge") {
-    keepSelectChallengeRecord(run, boxRate, directionRate, pathRate, averageTime);
+    keepSelectChallengeRecord(run, boxRate, directionRate, pathRate, averageTime, averageBoxTime, averageCommandDelay);
   }
-  selectSummary.textContent = selectDiagnosis(run, boxRate, directionRate, pathRate, averageTime);
+  selectSummary.textContent = selectDiagnosis(run, boxRate, directionRate, pathRate, averageTime, averageBoxTime, averageCommandDelay);
 }
 
-function keepSelectChallengeRecord(run, boxRate, directionRate, pathRate, averageTime) {
+function keepSelectChallengeRecord(run, boxRate, directionRate, pathRate, averageTime, averageBoxTime, averageCommandDelay) {
   const result = window.challengeRecords.keepBetter(SELECT_CHALLENGE_RECORD_KEY, {
     successes: run.successes,
     misses: run.misses,
@@ -311,6 +329,8 @@ function keepSelectChallengeRecord(run, boxRate, directionRate, pathRate, averag
     directionRate,
     pathRate,
     averageTime,
+    averageBoxTime,
+    averageCommandDelay,
     rate: correctSelectRate(run),
     settings: run.settings,
   }, betterSelectRecord);
@@ -333,15 +353,21 @@ function renderSelectChallengeRecord(record = window.challengeRecords.get(SELECT
   selectBestRecord.textContent = `${prefix}：成功 ${record.successes} 回合 · 框选 ${formatSelectPercent(record.boxRate)} · ${formatSelectRate(record.rate)}`;
 }
 
-function selectDiagnosis(run, boxRate, directionRate, pathRate, averageTime) {
+function selectDiagnosis(run, boxRate, directionRate, pathRate, averageTime, averageBoxTime, averageCommandDelay) {
   if (run.mode === "challenge") {
-    return `30 秒挑战完成：成功 ${run.successes} 回合，框选成功率 ${formatSelectPercent(boxRate)}，正确回合速 ${formatSelectRate(correctSelectRate(run))}。`;
+    return `30 秒挑战完成：成功 ${run.successes} 回合，框选 ${formatSelectMs(averageBoxTime)}，命令延迟 ${formatSelectMs(averageCommandDelay)}，正确回合速 ${formatSelectRate(correctSelectRate(run))}。`;
   }
   if (!run.successes) {
     return "还没有完成一个框选到红点的回合。先让拖框稳定包住全部绿点。";
   }
   if (boxRate < 0.8) {
     return `平均完成 ${formatSelectMs(averageTime)}。当前先补框选覆盖，成功率 ${formatSelectPercent(boxRate)} 还会拖慢后续红点。`;
+  }
+  if (averageBoxTime > 520) {
+    return `平均完成 ${formatSelectMs(averageTime)}，其中框选耗时 ${formatSelectMs(averageBoxTime)}。可以练更短的框选起手和释放。`;
+  }
+  if (averageCommandDelay > 260) {
+    return `框选已经能完成，但释放后命令延迟 ${formatSelectMs(averageCommandDelay)}。重点练框完立刻右键/点红点。`;
   }
   if (directionRate < 0.68) {
     return `框选覆盖已经较稳。方向顺势 ${formatSelectPercent(directionRate)}，可以多从红点一侧结束拖框。`;
@@ -537,9 +563,10 @@ selectArena.addEventListener("pointermove", moveSelectPointer);
 selectArena.addEventListener("pointerup", endSelectDrag);
 selectArena.addEventListener("pointercancel", endSelectDrag);
 selectArena.addEventListener("click", missSelectArena);
-selectRoundLayer.addEventListener("click", clickSelectRed);
+selectRoundLayer.addEventListener("pointerdown", clickSelectRed);
 [selectCountInput, selectSizeInput, selectSpreadInput, selectRedDistanceInput, selectAreaInput].forEach((input) => input.addEventListener("input", syncSelectOutputs));
 document.addEventListener("fullscreenchange", syncSelectFullscreen);
+window.trainingClickButtons.suppressContextMenu(selectArena);
 
 syncSelectOutputs();
 updateSelectMetrics();

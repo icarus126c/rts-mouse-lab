@@ -16,6 +16,7 @@ const roundCountInput = document.querySelector("#roundCountInput");
 const targetSizeInput = document.querySelector("#targetSizeInput");
 const jumpScaleInput = document.querySelector("#jumpScaleInput");
 const spawnRangeInput = document.querySelector("#spawnRangeInput");
+const calibrationClickButtonInput = document.querySelector("#calibrationClickButtonInput");
 const showTraceInput = document.querySelector("#showTraceInput");
 const pathEfficiencyInput = document.querySelector("#pathEfficiencyInput");
 const hitRateInput = document.querySelector("#hitRateInput");
@@ -90,6 +91,7 @@ function getSettings() {
     targetSize: Number(targetSizeInput.value),
     jumpScale: Number(jumpScaleInput.value),
     spawnRange: Number(spawnRangeInput.value) / 100,
+    clickButton: window.trainingClickButtons.mode(calibrationClickButtonInput),
     showTrace: showTraceInput.checked,
     pathEfficiency: pathEfficiencyInput.checked,
     showHitRate: hitRateInput.checked,
@@ -181,7 +183,7 @@ function centralPoint() {
 }
 
 function beginTrial(event) {
-  if (!run || trial?.state !== "anchor") {
+  if (!run || trial?.state !== "anchor" || !window.trainingClickButtons.accepts(event, run.settings.clickButton)) {
     return;
   }
 
@@ -296,7 +298,7 @@ function collectSample(event) {
 }
 
 function completeTrial(event, targetIndex) {
-  if (!run || trial?.state !== "target") {
+  if (!run || trial?.state !== "target" || !window.trainingClickButtons.accepts(event, run.settings.clickButton)) {
     return;
   }
 
@@ -805,6 +807,7 @@ window.addEventListener("resize", () => {
   }
 });
 document.addEventListener("fullscreenchange", syncFullscreenState);
+window.trainingClickButtons.suppressContextMenu(arena);
 
 resizeCanvas();
 syncOutputs();

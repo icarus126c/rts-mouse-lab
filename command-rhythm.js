@@ -10,6 +10,7 @@ const roundsInput = document.querySelector("#roundsInput");
 const chainInput = document.querySelector("#chainInput");
 const rhythmSizeInput = document.querySelector("#rhythmSizeInput");
 const rhythmRangeInput = document.querySelector("#rhythmRangeInput");
+const rhythmClickButtonInput = document.querySelector("#rhythmClickButtonInput");
 const showPulseInput = document.querySelector("#showPulseInput");
 const hitSoundInput = document.querySelector("#hitSoundInput");
 const roundsOutput = document.querySelector("#roundsOutput");
@@ -55,6 +56,7 @@ function rhythmSettings() {
     chainLength: Number(chainInput.value),
     targetSize: Number(rhythmSizeInput.value),
     spawnRange: Number(rhythmRangeInput.value) / 100,
+    clickButton: window.trainingClickButtons.mode(rhythmClickButtonInput),
     showPulse: showPulseInput.checked,
     hitSound: hitSoundInput.checked,
   };
@@ -141,7 +143,7 @@ function rhythmBounds() {
 }
 
 function hitRhythmTarget(event) {
-  if (!rhythmRun || !rhythmRound) {
+  if (!rhythmRun || !rhythmRound || !window.trainingClickButtons.accepts(event, rhythmRun.settings.clickButton)) {
     return;
   }
   event.stopPropagation();
@@ -165,7 +167,7 @@ function hitRhythmTarget(event) {
 }
 
 function missRhythmTarget(event) {
-  if (!rhythmRun || !rhythmRound || event.target.closest(".rhythm-target")) {
+  if (!rhythmRun || !rhythmRound || event.target.closest(".rhythm-target") || !window.trainingClickButtons.accepts(event, rhythmRun.settings.clickButton)) {
     return;
   }
   rhythmRound.misses += 1;
@@ -389,6 +391,7 @@ clearRhythmHistoryButton.addEventListener("click", () => {
   input.addEventListener("input", syncRhythmOutputs);
 });
 document.addEventListener("fullscreenchange", syncRhythmFullscreen);
+window.trainingClickButtons.suppressContextMenu(rhythmArena);
 
 syncRhythmOutputs();
 updateRhythmMetrics();

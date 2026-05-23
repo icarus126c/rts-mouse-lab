@@ -451,6 +451,93 @@ h2 {
   box-shadow: 0 0 0 7px rgba(255, 102, 118, 0.11);
 }
 
+.module-preview.amove {
+  background:
+    linear-gradient(rgba(154, 175, 188, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 175, 188, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(104, 224, 167, 0.1), rgba(8, 12, 16, 0.58), rgba(255, 102, 118, 0.08));
+  background-size: 48px 48px, 48px 48px, auto;
+}
+
+.amove-preview-anchor,
+.amove-preview-dot {
+  position: absolute;
+  border: 2px solid rgba(238, 244, 247, 0.94);
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.amove-preview-anchor {
+  top: 68%;
+  left: 24%;
+  width: 34px;
+  height: 34px;
+  background: radial-gradient(circle, #fff 0 15%, var(--green) 18% 47%, transparent 50%);
+  box-shadow: 0 0 0 8px rgba(104, 224, 167, 0.1);
+}
+
+.amove-preview-key {
+  position: absolute;
+  top: 34%;
+  left: 42%;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(102, 185, 255, 0.52);
+  border-radius: 8px;
+  color: var(--cyan);
+  background: rgba(102, 185, 255, 0.12);
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+}
+
+.amove-preview-dot {
+  width: 25px;
+  height: 25px;
+  background: radial-gradient(circle, #fff 0 15%, rgba(238, 244, 247, 0.78) 18% 47%, transparent 50%);
+  box-shadow: 0 0 0 6px rgba(238, 244, 247, 0.08);
+  animation: preview-amove 2s ease-in-out infinite;
+}
+
+.amove-preview-dot.red {
+  top: 48%;
+  left: 70%;
+  width: 31px;
+  height: 31px;
+  background: radial-gradient(circle, #fff 0 15%, var(--red) 18% 47%, transparent 50%);
+  box-shadow: 0 0 0 8px rgba(255, 102, 118, 0.11);
+}
+
+.amove-preview-dot.white.one {
+  top: 28%;
+  left: 63%;
+  animation-delay: -0.4s;
+}
+
+.amove-preview-dot.white.two {
+  top: 66%;
+  left: 83%;
+  animation-delay: -0.9s;
+}
+
+.amove-preview-dot.white.three {
+  top: 38%;
+  left: 88%;
+  animation-delay: -1.3s;
+}
+
+@keyframes preview-amove {
+  0%,
+  100% {
+    translate: -76% -50%;
+  }
+
+  50% {
+    translate: -24% -50%;
+  }
+}
+
 .module-body {
   display: grid;
   gap: 9px;

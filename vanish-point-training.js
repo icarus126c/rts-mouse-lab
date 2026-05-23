@@ -9,6 +9,7 @@ const vanishSizeInput = document.querySelector("#vanishSizeInput");
 const lifetimeInput = document.querySelector("#lifetimeInput");
 const gapInput = document.querySelector("#gapInput");
 const failLimitInput = document.querySelector("#failLimitInput");
+const vanishClickButtonInput = document.querySelector("#vanishClickButtonInput");
 const vanishHitSoundInput = document.querySelector("#vanishHitSoundInput");
 const vanishSizeOutput = document.querySelector("#vanishSizeOutput");
 const lifetimeOutput = document.querySelector("#lifetimeOutput");
@@ -39,6 +40,7 @@ function vanishSettings() {
     lifetimeMs: Number(lifetimeInput.value),
     gapMs: Number(gapInput.value),
     failLimit: Number(failLimitInput.value),
+    clickButton: window.trainingClickButtons.mode(vanishClickButtonInput),
     hitSound: vanishHitSoundInput.checked,
   };
 }
@@ -123,7 +125,7 @@ function vanishPoint() {
 
 function hitVanishTarget(event) {
   const targetElement = event.target.closest(".vanish-target");
-  if (!vanishRun || !targetElement) {
+  if (!vanishRun || !targetElement || !window.trainingClickButtons.accepts(event, vanishRun.settings.clickButton)) {
     return;
   }
   const target = vanishRun.targets.get(targetElement.dataset.targetId);
@@ -167,7 +169,7 @@ function removeVanishTarget(id) {
 }
 
 function missVanishTarget(event) {
-  if (!vanishRun || event.target.closest(".vanish-target")) {
+  if (!vanishRun || event.target.closest(".vanish-target") || !window.trainingClickButtons.accepts(event, vanishRun.settings.clickButton)) {
     return;
   }
   vanishRun.misses += 1;
@@ -376,6 +378,7 @@ vanishArena.addEventListener("pointerdown", missVanishTarget);
   input.addEventListener("input", syncVanishOutputs);
 });
 document.addEventListener("fullscreenchange", syncVanishFullscreen);
+window.trainingClickButtons.suppressContextMenu(vanishArena);
 
 syncVanishOutputs();
 updateVanishMetrics();

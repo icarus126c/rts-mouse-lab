@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>框选练习 - 指令落点实验室</title>
     <link rel="stylesheet" href="./box-select-training.css" />
+    <link rel="stylesheet" href="./click-buttons.css" />
   </head>
   <body>
     <main class="select-shell">
@@ -85,6 +86,14 @@
             <span>出现区域 <strong id="selectAreaOutput">88%</strong></span>
             <input id="selectAreaInput" type="range" min="40" max="100" step="4" value="88" />
           </label>
+          <label class="field">
+            <span>红点指令按键</span>
+            <select id="selectClickButtonInput">
+              <option value="left">左键</option>
+              <option value="right">右键</option>
+              <option value="both">左右都可</option>
+            </select>
+          </label>
           <label class="toggle-field">
             <input id="selectHitSoundInput" type="checkbox" />
             <span>
@@ -103,6 +112,8 @@
             <div><dt>失误</dt><dd id="selectResultMisses">--</dd></div>
             <div><dt>框选成功率</dt><dd id="selectResultBox">--</dd></div>
             <div><dt>平均完成</dt><dd id="selectResultAverage">--</dd></div>
+            <div><dt>框选耗时</dt><dd id="selectResultBoxTime">--</dd></div>
+            <div><dt>命令延迟</dt><dd id="selectResultCommandDelay">--</dd></div>
             <div><dt>方向顺势</dt><dd id="selectResultDirection">--</dd></div>
             <div><dt>路径效率</dt><dd id="selectResultPath">--</dd></div>
             <div><dt>正确回合速</dt><dd id="selectResultRate">--</dd></div>
@@ -120,6 +131,7 @@
         </section>
       </aside>
     </main>
+    <script src="./click-buttons.js"></script>
     <script src="./challenge-records.js"></script>
     <script src="./box-select-training.js"></script>
   </body>

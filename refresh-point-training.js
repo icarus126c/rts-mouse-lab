@@ -10,6 +10,7 @@ const refreshSizeInput = document.querySelector("#refreshSizeInput");
 const targetCountInput = document.querySelector("#targetCountInput");
 const refreshRangeInput = document.querySelector("#refreshRangeInput");
 const scatterInput = document.querySelector("#scatterInput");
+const refreshClickButtonInput = document.querySelector("#refreshClickButtonInput");
 const refreshHitSoundInput = document.querySelector("#refreshHitSoundInput");
 const durationOutput = document.querySelector("#durationOutput");
 const refreshSizeOutput = document.querySelector("#refreshSizeOutput");
@@ -42,6 +43,7 @@ function refreshSettings() {
     targetCount: Number(targetCountInput.value),
     spawnRange: Number(refreshRangeInput.value) / 100,
     scatter: Number(scatterInput.value),
+    clickButton: window.trainingClickButtons.mode(refreshClickButtonInput),
     hitSound: refreshHitSoundInput.checked,
   };
 }
@@ -171,7 +173,7 @@ function minimumRefreshDistance(point, existingTargets) {
 
 function hitRefreshTarget(event) {
   const target = event.target.closest(".refresh-target");
-  if (!refreshRun || !target) {
+  if (!refreshRun || !target || !window.trainingClickButtons.accepts(event, refreshRun.settings.clickButton)) {
     return;
   }
   event.stopPropagation();
@@ -190,7 +192,7 @@ function hitRefreshTarget(event) {
 }
 
 function missRefreshTarget(event) {
-  if (!refreshRun || event.target.closest(".refresh-target")) {
+  if (!refreshRun || event.target.closest(".refresh-target") || !window.trainingClickButtons.accepts(event, refreshRun.settings.clickButton)) {
     return;
   }
   refreshRun.misses += 1;
@@ -377,6 +379,7 @@ refreshArena.addEventListener("pointerdown", missRefreshTarget);
   input.addEventListener("input", syncRefreshOutputs);
 });
 document.addEventListener("fullscreenchange", syncRefreshFullscreen);
+window.trainingClickButtons.suppressContextMenu(refreshArena);
 
 syncRefreshOutputs();
 updateRefreshMetrics();

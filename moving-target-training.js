@@ -10,6 +10,7 @@ const movingCountInput = document.querySelector("#movingCountInput");
 const moveRangeInput = document.querySelector("#moveRangeInput");
 const movingAreaInput = document.querySelector("#movingAreaInput");
 const movingSpeedInput = document.querySelector("#movingSpeedInput");
+const movingClickButtonInput = document.querySelector("#movingClickButtonInput");
 const movingHitSoundInput = document.querySelector("#movingHitSoundInput");
 const movingSizeOutput = document.querySelector("#movingSizeOutput");
 const movingCountOutput = document.querySelector("#movingCountOutput");
@@ -43,6 +44,7 @@ function movingSettings() {
     moveRange: Number(moveRangeInput.value),
     spawnRange: Number(movingAreaInput.value) / 100,
     speed: Number(movingSpeedInput.value),
+    clickButton: window.trainingClickButtons.mode(movingClickButtonInput),
     hitSound: movingHitSoundInput.checked,
   };
 }
@@ -188,7 +190,7 @@ function reflectMovingVelocity(target, normalX, normalY) {
 
 function hitMovingTarget(event) {
   const targetElement = event.target.closest(".moving-target");
-  if (!movingRun || !targetElement) {
+  if (!movingRun || !targetElement || !window.trainingClickButtons.accepts(event, movingRun.settings.clickButton)) {
     return;
   }
   const target = movingRun.targets.get(targetElement.dataset.targetId);
@@ -208,7 +210,7 @@ function hitMovingTarget(event) {
 }
 
 function missMovingTarget(event) {
-  if (!movingRun || event.target.closest(".moving-target")) {
+  if (!movingRun || event.target.closest(".moving-target") || !window.trainingClickButtons.accepts(event, movingRun.settings.clickButton)) {
     return;
   }
   movingRun.misses += 1;
@@ -407,6 +409,7 @@ movingArena.addEventListener("pointerdown", missMovingTarget);
   input.addEventListener("input", syncMovingOutputs);
 });
 document.addEventListener("fullscreenchange", syncMovingFullscreen);
+window.trainingClickButtons.suppressContextMenu(movingArena);
 
 syncMovingOutputs();
 updateMovingMetrics();

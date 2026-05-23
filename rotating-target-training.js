@@ -11,6 +11,7 @@ const rotatingMoveRangeInput = document.querySelector("#rotatingMoveRangeInput")
 const rotatingAreaInput = document.querySelector("#rotatingAreaInput");
 const rotatingMoveSpeedInput = document.querySelector("#rotatingMoveSpeedInput");
 const rotationSpeedInput = document.querySelector("#rotationSpeedInput");
+const rotatingClickButtonInput = document.querySelector("#rotatingClickButtonInput");
 const rotatingHitSoundInput = document.querySelector("#rotatingHitSoundInput");
 const rotatingSizeOutput = document.querySelector("#rotatingSizeOutput");
 const rotatingCountOutput = document.querySelector("#rotatingCountOutput");
@@ -46,6 +47,7 @@ function rotatingSettings() {
     spawnRange: Number(rotatingAreaInput.value) / 100,
     moveSpeed: Number(rotatingMoveSpeedInput.value),
     rotationSpeed: Number(rotationSpeedInput.value) * Math.PI / 180,
+    clickButton: window.trainingClickButtons.mode(rotatingClickButtonInput),
     hitSound: rotatingHitSoundInput.checked,
   };
 }
@@ -210,7 +212,7 @@ function reflectRotatingVelocity(group, nx, ny) {
 
 function clickRotatingDot(event) {
   const dot = event.target.closest(".rotating-dot");
-  if (!rotatingRun || !dot) return;
+  if (!rotatingRun || !dot || !window.trainingClickButtons.accepts(event, rotatingRun.settings.clickButton)) return;
   event.stopPropagation();
   if (dot.dataset.kind !== "red") {
     rotatingRun.misses += 1;
@@ -228,7 +230,7 @@ function clickRotatingDot(event) {
 }
 
 function missRotatingArena(event) {
-  if (!rotatingRun || event.target.closest(".rotating-dot")) return;
+  if (!rotatingRun || event.target.closest(".rotating-dot") || !window.trainingClickButtons.accepts(event, rotatingRun.settings.clickButton)) return;
   rotatingRun.misses += 1;
   updateRotatingMetrics();
 }
@@ -404,6 +406,7 @@ rotatingArena.addEventListener("pointerdown", missRotatingArena);
   input.addEventListener("input", syncRotatingOutputs);
 });
 document.addEventListener("fullscreenchange", syncRotatingFullscreen);
+window.trainingClickButtons.suppressContextMenu(rotatingArena);
 
 syncRotatingOutputs();
 updateRotatingMetrics();
